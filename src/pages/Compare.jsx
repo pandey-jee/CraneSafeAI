@@ -169,7 +169,7 @@ const Compare = () => {
       (crane2.specs.safetyRating > crane1.specs.safetyRating ? ' superior safety rating' : '');
 
     return {
-      crane,
+      crane: better,
       reason: reason || 'overall better performance metrics'
     };
   };
