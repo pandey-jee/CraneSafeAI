@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { 
   TrendingUp, 
   Shield, 
@@ -12,11 +14,20 @@ import {
   Zap,
   BarChart3,
   Calendar,
-  Wrench
+  Wrench,
+  RefreshCw
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell } from 'recharts';
 
 const Impact = () => {
+  const [selectedTimeframe, setSelectedTimeframe] = useState('6months');
+  const [animateCharts, setAnimateCharts] = useState(true);
+
+  // Function to refresh data (simulates real-time updates)
+  const refreshData = () => {
+    setAnimateCharts(false);
+    setTimeout(() => setAnimateCharts(true), 100);
+  };
   // Sample impact data over time
   const impactData = [
     { month: 'Jan', safety: 85, downtime: 15, cost: 120000, efficiency: 70 },
@@ -99,7 +110,7 @@ const Impact = () => {
       timeline: "Q3 2025"
     },
     {
-      icon,
+      icon: CheckCircle,
       title: "Blockchain Integration",
       description: "Immutable equipment history and certification tracking for regulatory compliance",
       timeline: "Q4 2025"
@@ -110,13 +121,28 @@ const Impact = () => {
     <div className="min-h-screen bg-background p-6">
       <div className="container mx-auto space-y-8">
         {/* Header */}
-        <div className="text-center">
+        <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold text-foreground mb-2">
             Impact & Future Vision
           </h1>
           <p className="text-muted-foreground text-lg">
             Measurable improvements and our roadmap for the future of crane operations
           </p>
+          
+          {/* Interactive Controls */}
+          <div className="flex flex-wrap justify-center gap-4 mt-6">
+            <Button 
+              variant="outline" 
+              onClick={refreshData}
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Refresh Data
+            </Button>
+            <Badge variant="secondary" className="text-sm px-3 py-1">
+              Last Updated: {new Date().toLocaleTimeString()}
+            </Badge>
+          </div>
         </div>
 
         {/* Impact Metrics Grid */}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -70,6 +70,14 @@ const Compare = () => {
   const [selectedCrane2, setSelectedCrane2] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+  // Auto-select cranes for demo on initial load
+  useEffect(() => {
+    if (!selectedCrane1 && !selectedCrane2) {
+      setSelectedCrane1('crane-a');
+      setSelectedCrane2('crane-b');
+    }
+  }, []);
 
   const crane1 = selectedCrane1 ? craneData[selectedCrane1] : null;
   const crane2 = selectedCrane2 ? craneData[selectedCrane2] : null;
@@ -401,9 +409,9 @@ const Compare = () => {
                     <BarChart 
                       data={comparisonData} 
                       margin={{ 
-                        top, 
-                        right, 
-                        left, 
+                        top: 5, 
+                        right: 30, 
+                        left: 20, 
                         bottom: window.innerWidth < 640 ? 80 : 60 
                       }}
                     >
@@ -457,9 +465,9 @@ const Compare = () => {
                     <RadarChart 
                       data={radarData} 
                       margin={{ 
-                        top, 
-                        right, 
-                        left, 
+                        top: 20, 
+                        right: 80, 
+                        left: 80, 
                         bottom: 20 
                       }}
                     >

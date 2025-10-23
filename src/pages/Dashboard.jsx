@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { 
   Activity, 
   Thermometer, 
@@ -10,7 +11,8 @@ import {
   Clock,
   TrendingUp,
   TrendingDown,
-  Gauge
+  Gauge,
+  RefreshCw
 } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
@@ -28,6 +30,7 @@ const generateIoTData = () => {
 const Dashboard = () => {
   const [liveData, setLiveData] = useState(generateIoTData());
   const [historicalData, setHistoricalData] = useState([]);
+  const [lastUpdated, setLastUpdated] = useState(new Date());
   const [alerts, setAlerts] = useState([
     { id: 1, type: 'warning', message: 'Crane B requires maintenance in 12 days', time: '2 min ago' },
     { id: 2, type: 'info', message: 'Predictive model updated successfully', time: '5 min ago' },
@@ -41,11 +44,25 @@ const Dashboard = () => {
     { name: 'Critical', value: 5, color: 'hsl(var(--destructive))' }
   ];
 
+  // Manual refresh function
+  const refreshData = () => {
+    const newData = generateIoTData();
+    setLiveData(newData);
+    setLastUpdated(new Date());
+    
+    // Add to historical data
+    setHistoricalData(prev => {
+      const updated = [...prev, { ...newData, time: Date.now() }];
+      return updated.slice(-20);
+    });
+  };
+
   // Update data every 3 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       const newData = generateIoTData();
       setLiveData(newData);
+      setLastUpdated(new Date());
       
       // Add to historical data (keep last 20 points)
       setHistoricalData(prev => {
@@ -94,7 +111,28 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background p-6">
       <div className="container mx-auto space-y-8">
         {/* Header */}
-        <div className="text-center">
+        <div className="text-center space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                Live Data
+              </Badge>
+              <Badge variant="secondary">
+                <Clock className="w-3 h-3 mr-1" />
+                Updated {lastUpdated.toLocaleTimeString()}
+              </Badge>
+            </div>
+            <Button 
+              onClick={refreshData}
+              variant="outline" 
+              size="sm"
+              className="flex items-center space-x-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              <span>Refresh</span>
+            </Button>
+          </div>
           <h1 className="text-4xl font-bold text-foreground mb-2">
             Live IoT Dashboard
           </h1>
